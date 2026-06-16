@@ -1,0 +1,14 @@
+#compdef compress
+#autoload
+
+local -a exts=(
+  7z bz2 gz rar tar tar.bz2 tar.gz tar.xz tar.zst tbz tbz2 tgz txz tzst zip zst
+)
+
+_arguments \
+  '(-r --remove)'{-r,--remove}'[压缩成功后删除源文件]' \
+  '(-h --help)'{-h,--help}'[显示帮助信息]' \
+  '(-L --dereference)'{-L,--dereference}'[跟随符号链接（将真实文件打包）]' \
+  "1:target archive:_files -g '(#i)*.(${(j:|:)exts})(-.)'" \
+  '*::source files:_files' \
+    && return 0
