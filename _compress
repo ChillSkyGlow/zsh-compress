@@ -6,9 +6,19 @@ local -a exts=(
 )
 
 _arguments \
+  '(-L --dereference)'{-L,--dereference}'[跟随符号链接（打包真实文件而非链接）]' \
   '(-r --remove)'{-r,--remove}'[压缩成功后删除源文件]' \
   '(-h --help)'{-h,--help}'[显示帮助信息]' \
-  '(-L --dereference)'{-L,--dereference}'[跟随符号链接（将真实文件打包）]' \
-  "1:target archive:_files -g '(#i)*.(${(j:|:)exts})(-.)'" \
-  '*::source files:_files' \
-    && return 0
+  "1:目标压缩包:->archive" \
+  '*:源文件:->sources' \
+  && return 0
+
+case $state in
+  archive)
+    # 允许输入新文件名，同时补全已存在的符合条件的文件
+    _alternative \
+      'files:已存在文件:_files -g "*.(${(j:|:)exts})"' \
+      'newfile:新建文件: _files -g "*.(${(j:|:)exts})" ' ;;
+  sources)
+    _files ;;
+esac
